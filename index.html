@@ -1308,10 +1308,14 @@ function setupAPI() {
             b.className = 'api-btn' + (getAPIKey() ? ' has-key' : ''); }
         updApiBtn();
 async function callAI(prompt) {
+    const apiKey = 'sk-d10222dfce1548389edcc571970f46ca';
     try {
-        const r = await fetch('https://deepseek-proxy-nu.vercel.app/api/ai', {
+        const r = await fetch('https://api.deepseek.com/v1/chat/completions', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + apiKey
+            },
             body: JSON.stringify({
                 model: 'deepseek-chat',
                 messages: [
