@@ -1095,7 +1095,7 @@ const prompt = `解读奇门排盘：时间${r.sz.year}年${r.sz.month}月${r.sz
 现状：...
 未来：...
 
-你是个资深的奇门遁甲解读师，直接给解读，严禁开头引导语和结尾客套话，不用术语。每段至少写5句完整的话。`;
+你是个资深的奇门遁甲解读师，直接给解读，严禁开头引导语和结尾客套话，不用术语。确保每段内容完整，不允许中途截断。每段至少写5句完整的话。`;
             callAI(prompt).then(t => {
                 tarotRow.innerHTML = buildTarotCards(t, true);
             }).catch(e => {
@@ -1304,6 +1304,12 @@ function setupAPI() {
             document.getElementById('qmDt').value = s;
             document.getElementById('bzDt').value = s; }
         window.onload = initAll;
+        document.addEventListener('keydown', function(e) {
+    if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I') || (e.ctrlKey && e.key === 'u')) {
+        e.preventDefault();
+        return false;
+    }
+});
     </script>
 </body>
 </html>
