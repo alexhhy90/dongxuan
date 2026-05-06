@@ -1307,16 +1307,15 @@ function setupAPI() {
             b.textContent = getAPIKey() ? '🔑 已设置' : '🔑 API设置';
             b.className = 'api-btn' + (getAPIKey() ? ' has-key' : ''); }
         updApiBtn();
-        async function callAI(prompt) {
-            const key = getAPIKey(); if (!key) return '⚠️ 请先设置API Key。';
-            try {
-               const r = await fetch('https://deepseek-proxy-nu.vercel.app/api/ai', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
-                    body: JSON.stringify({
-                        model: 'deepseek-chat',
-                        messages: [{ role: 'system',
-    content: `你是一个命理分析引擎。你的输出必须严格遵守以下规则：
+async function callAI(prompt) {
+    try {
+        const r = await fetch('https://deepseek-proxy-nu.vercel.app/api/ai', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                model: 'deepseek-chat',
+                messages: [
+                    { role: 'system', content: `你是一个命理分析引擎。你的输出必须严格遵守以下规则：
 1. 直接输出解读内容，不写任何开头语、引导语、寒暄、客套话。
 2. 不写结尾总结、祝福语、免责声明。
 3. 不对用户提问，不写"你知道吗""记住"等互动语句。
@@ -1336,8 +1335,8 @@ top_p: 0.95,
                     })
                 });
                 const d = await r.json();
-                return d.choices?.[0]?.message?.content || '⚠️ 返回异常：' + JSON.stringify(d);
-            } catch (e) { return '⚠️ 请求失败：' + e.message; }
+        return d.choices?.[0]?.message?.content || '⚠️ 返回异常：' + JSON.stringify(d);
+    } catch (e) { return '⚠️ 请求失败：' + e.message; }
         }
 
         // ==================== 初始化 ====================
