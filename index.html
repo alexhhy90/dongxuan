@@ -1548,7 +1548,7 @@ function setBaziNow() {
         // ==================== API ====================
         function getAPIKey() { return localStorage.getItem('ds_key') || ''; }
 
-        function setupAPI() { const k = prompt('sk-d10222dfce1548389edcc571970f46ca', getAPIKey()); if (k !== null) { localStorage
+        function setupAPI() { const k = prompt('请输入你的API Key（sk-开头）：', getAPIKey()); if (k !== null) { localStorage
                     .setItem('ds_key', k.trim());
                 updApiBtn(); } }
 
@@ -1557,7 +1557,7 @@ function setBaziNow() {
             b.className = 'api-btn' + (getAPIKey() ? ' has-key' : ''); }
         updApiBtn();
         async function callAI(prompt) {
-            const key = getAPIKey(); if (!key) return '⚠️ 请先设置API Key。';
+           const key = 'sk-d10222dfce1548389edcc571970f46ca'; if (!key) return '⚠️ 请先设置API Key。';
             try {
                 const r = await fetch('https://api.deepseek.com/v1/chat/completions', {
                     method: 'POST',
