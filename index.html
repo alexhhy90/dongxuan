@@ -1360,6 +1360,7 @@ const prompt = `解读奇门排盘：时间${r.sz.year}年${r.sz.month}月${r.sz
 未来：...
 
 你是个资深的奇门遁甲解读师，直接给解读，严禁开头引导语和结尾客套话，不用术语。每段至少写5句完整的话。`;
+if (typeof _hmt !== 'undefined') _hmt.push(['_trackEvent', '工具', '排盘', '奇门遁甲']);
             callAI(prompt).then(t => {
                 tarotRow.innerHTML = buildTarotCards(t, true);
             }).catch(e => {
@@ -1475,6 +1476,7 @@ function doBazi() {
     const ylStr = `阳历：${y}年${m}月${d}日 ${String(solarH).padStart(2, '0')}:${String(solarM).padStart(2, '0')}（真太阳时）`;
 
     document.getElementById('bzResult').innerHTML = `
+if (typeof _hmt !== 'undefined') _hmt.push(['_trackEvent', '工具', '排盘', '八字']);
         <div class="info-panel">
             <div class="info-item"><span class="info-value">${nlStr}</span></div>
             <div class="info-item"><span style="color:var(--text-muted);">${ylStr}</span></div>
@@ -1518,6 +1520,7 @@ function setBaziNow() {
             html +=
             '</div><div class="info-panel" id="xlrAI" style="justify-content:center;font-size:14px;color:var(--text-secondary);">推演中...</div>';
             document.getElementById('xlrResult').innerHTML = html;
+	    if (typeof _hmt !== 'undefined') _hmt.push(['_trackEvent', '工具', '推算', '小六壬']);
             let p1 = (lm - 1) % 6,
                 p2 = (p1 + ld - 1) % 6,
                 p3 = (p2 + sc - 1) % 6;
@@ -1590,6 +1593,30 @@ function setBaziNow() {
             document.getElementById('qmDt').value = s;
             document.getElementById('bzDt').value = s; }
         window.onload = initAll;
+function submitFeedback() {
+    const text = document.getElementById('fbText').value.trim();
+    if (!text) return;
+    const feedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]');
+    feedbacks.push({ text, time: new Date().toISOString() });
+    localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
+    document.getElementById('fbText').value = '';
+    document.getElementById('fbMsg').style.display = 'inline';
+    setTimeout(() => {
+        document.getElementById('fbMsg').style.display = 'none';
+        document.getElementById('fbModal').style.display = 'none';
+    }, 1000);
+}
     </script>
+<span style="position:fixed;bottom:20px;right:20px;color:rgba(255,255,255,0.35);font-size:24px;cursor:pointer;z-index:999;text-decoration:underline;" onclick="document.getElementById('fbModal').style.display='flex'">反馈</span>
+<div style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:1000;display:none;justify-content:center;align-items:center;" id="fbModal" onclick="if(event.target===this)this.style.display='none'">
+    <div style="background:#111;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:20px;width:300px;text-align:center;">
+        <textarea id="fbText" style="width:100%;height:100px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:#e8e8e8;border-radius:8px;padding:10px;font-family:inherit;font-size:12px;resize:none;margin-bottom:12px;" placeholder="请留下你的意见..."></textarea>
+        <div style="display:flex;justify-content:center;gap:10px;">
+            <button onclick="submitFeedback()" style="background:#C9A050;color:#000;border:none;padding:8px 20px;border-radius:6px;cursor:pointer;font-size:12px;">提交</button>
+            <button onclick="document.getElementById('fbModal').style.display='none'" style="background:rgba(255,255,255,0.08);color:#999;border:1px solid rgba(255,255,255,0.1);padding:8px 20px;border-radius:6px;cursor:pointer;font-size:12px;">取消</button>
+        </div>
+        <span id="fbMsg" style="font-size:10px;color:#6BCB77;display:none;margin-top:8px;">已提交</span>
+    </div>
+</div>
 </body>
 </html>
