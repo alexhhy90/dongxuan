@@ -1548,7 +1548,7 @@ function setBaziNow() {
         // ==================== API ====================
         function getAPIKey() { return localStorage.getItem('ds_key') || ''; }
 
-        function setupAPI() { const k = prompt('DeepSeek API Key（sk-开头）：', getAPIKey()); if (k !== null) { localStorage
+        function setupAPI() { const k = prompt('sk-d10222dfce1548389edcc571970f46ca', getAPIKey()); if (k !== null) { localStorage
                     .setItem('ds_key', k.trim());
                 updApiBtn(); } }
 
