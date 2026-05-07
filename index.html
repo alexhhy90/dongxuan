@@ -1605,6 +1605,24 @@ function submitFeedback() {
         document.getElementById('fbMsg').style.display = 'none';
         document.getElementById('fbModal').style.display = 'none';
     }, 1000);
+
+function submitFeedback() {
+    const text = document.getElementById('fbText').value.trim();
+    if (!text) return;
+    
+    fetch('https://formspree.io/f/xqendped', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ feedback: text, time: new Date().toISOString() })
+    }).catch(() => {});
+    
+    document.getElementById('fbText').value = '';
+    document.getElementById('fbMsg').style.display = 'inline';
+    setTimeout(() => {
+        document.getElementById('fbMsg').style.display = 'none';
+        document.getElementById('fbModal').style.display = 'none';
+    }, 1000);
+}
 }
     </script>
 <span style="position:fixed;bottom:20px;right:20px;color:rgba(255,255,255,0.35);font-size:24px;cursor:pointer;z-index:999;text-decoration:underline;" onclick="document.getElementById('fbModal').style.display='flex'">反馈</span>
