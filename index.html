@@ -54,7 +54,7 @@
     justify-content: center;
     min-height: 100vh;
     position: relative;
-    overflow: hidden;
+    overflow: auto;
 }
 .home-logo {
     position: fixed;
@@ -84,11 +84,16 @@
         filter: drop-shadow(0 0 20px rgba(201, 160, 80, 0.5));
     }
 }
-        .header-title {
-            text-align: center;
-            margin-bottom: 44px;
-            margin-top: -80px;
-        }
+ 	.header-title {
+   	 text-align: center;
+   	 margin-bottom: 44px;
+  	  margin-top: 0;
+	}
+
+	.header-title img {
+  	  max-width: 30%;
+   	 height: auto !important;
+	}
         .header-title h1 {
             font-size: 26px;
             font-weight: 500;
@@ -166,10 +171,14 @@
             color: var(--text-secondary);
         }
         @media (max-width: 700px) {
-            .portal-grid {
-                flex-direction: column;
-                align-items: center;
-            }
+ .header-title img {
+        height: 100px !important;
+   	 .home-container {
+     	   justify-content: center;
+      	  min-height: 100vh;
+      	  padding-top: 0;
+   	 }
+	}
             .portal-card {
                 max-width: 400px;
                 width: 100%;
@@ -546,14 +555,21 @@
             flex-direction: column;
             border-color: rgba(255, 255, 255, 0.35);
         }
-        .tarot-upper,
-        .tarot-lower {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            padding: 10px 14px;
-            overflow: hidden;
-        }
+       .tarot-upper,
+.tarot-lower {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 10px 14px;
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.tarot-upper::-webkit-scrollbar,
+.tarot-lower::-webkit-scrollbar {
+    display: none;
+}
         .tarot-upper {
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
@@ -1341,7 +1357,9 @@ function goHome() {
             const tarotRow = document.getElementById('qmTarot');
             tarotRow.innerHTML = '<div class="tarot-loading">推演中...</div>';
             document.getElementById('qmSummary').innerHTML = '';
-const prompt = `解读奇门排盘：时间${r.sz.year}年${r.sz.month}月${r.sz.day}日${r.sz.shi}时，${r.yang?'阳遁':'阴遁'}${r.ju}局。按以下格式输出，必须严格遵守，每部分的现状和未来都必须有内容：
+const prompt = `解读奇门排盘：时间${r.sz.year}年${r.sz.month}月${r.sz.day}日${r.sz.shi}时，${r.yang?'阳遁':'阴遁'}${r.ju}局，值符${r.zf}，值使${r.zs}，空亡${r.kong.join('、')||'无'}，驿马${r.ym||'无'}。九宫详情：${JSON.stringify(r.cells)}。
+
+按以下格式输出，必须严格遵守：
 
 事业
 现状：...
@@ -1359,14 +1377,13 @@ const prompt = `解读奇门排盘：时间${r.sz.year}年${r.sz.month}月${r.sz
 现状：...
 未来：...
 
-你是个资深的奇门遁甲解读师，直接给解读，严禁开头引导语和结尾客套话，不用术语。每段至少写5句完整的话。`;
-if (typeof _hmt !== 'undefined') _hmt.push(['_trackEvent', '工具', '排盘', '奇门遁甲']);
-            callAI(prompt).then(t => {
-                tarotRow.innerHTML = buildTarotCards(t, true);
-            }).catch(e => {
-                tarotRow.innerHTML = '<div style="color:var(--red);text-align:center;">AI失败：' + e.message +
-                    '</div>';
-            });
+直接给解读，严禁开头引导语和结尾客套话，不用术语。每段至少写5句完整的话。`;
+
+callAI(prompt).then(t => {
+    tarotRow.innerHTML = buildTarotCards(t, true);
+}).catch(e => {
+    tarotRow.innerHTML = '<div style="color:var(--red);text-align:center;">AI失败：' + e.message + '</div>';
+});
         }
 
         function buildTarotCards(text, hasFuture = true) {
@@ -1574,10 +1591,11 @@ function setBaziNow() {
 6. 八字解读不写"现状""未来"字样。
 7. 奇门解读只写"现状"和"未来"两段，不多不少。
 8. 小六壬直接解读掌诀含义，不写"现状""未来"。
-9. 违反以上任何一条，输出即为不合格。` },
+9. 严禁使用任何专业术语。包括但不限于：生门、坎宫、天蓬、戊土、白虎、玄武、九地、天芮、九天、天辅、太阴、离宫、震宫、巽宫、艮宫、坤宫、乾宫、兑宫、天柱、金旺、水旺、木克土等。如果必须描述位置或状态，用日常用语代替。
+10.违反以上任何一条，输出即为不合格。` },
                             { role: 'user', content: prompt }
                         ],
-                        max_tokens: 4000,
+                        max_tokens: 6000,
                         temperature: 0.3
                     })
                 });
