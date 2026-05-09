@@ -172,8 +172,8 @@
         }
         @media (max-width: 700px) {
  .header-title img {
-	  width: 600px !important;
-      height: auto !important;
+        width: 60pv !important;
+        height: auto !important;
    	 .home-container {
      	   justify-content: center;
       	  min-height: 100vh;
@@ -497,7 +497,9 @@
             color: var(--cyan);
         }
         .phase-future {
-            color: var(--gold);
+           color: var(--gold);
+   	   filter: blur(6px);
+  	   user-select: none;
         }
         .tarot-row {
             display: flex;
@@ -566,7 +568,6 @@
     scrollbar-width: none;
     -ms-overflow-style: none;
 }
-
 .tarot-upper::-webkit-scrollbar,
 .tarot-lower::-webkit-scrollbar {
     display: none;
@@ -698,7 +699,7 @@
     <div id="toolPage" class="container" style="display:none;">
         <div class="top-bar">
             <button class="back-btn" onclick="goHome()">← 返回首页</button>
-            <button class="api-btn" id="apiBtn" onclick="setupAPI()">🔑 API设置</button>
+            
         </div>
         <div class="tab-nav">
             <button class="tab-btn active" id="tab-qimen" onclick="swPage('qimen')">奇门遁甲</button>
@@ -747,6 +748,19 @@
             </div>
             <div id="xlrResult"></div>
         </div>
+<div id="unlockBtn" style="width:100%;text-align:center;padding:20px 0;margin-top:10px;display:none;">
+    <button onclick="document.getElementById('wxModal').style.display='flex'" style="background:linear-gradient(135deg,#5EEADB,#8B7CF0);color:#000;border:none;padding:12px 28px;border-radius:25px;cursor:pointer;font-size:14px;font-weight:600;letter-spacing:0.05em;">加V免费领取完整解读</button>
+    <div style="color:rgba(255,255,255,0.3);font-size:10px;margin-top:6px;">解锁未来趋势</div>
+</div>
+
+<div style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:1001;display:none;justify-content:center;align-items:center;" id="wxModal" onclick="if(event.target===this)this.style.display='none'">
+    <div style="background:#111;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:24px;text-align:center;max-width:300px;">
+        <div style="font-size:16px;color:#C9A050;margin-bottom:12px;">添加微信 · 免费解锁</div>
+        <div style="font-size:18px;color:#e8e8e8;letter-spacing:0.1em;margin-bottom:6px;">微信号：你的微信号</div>
+        <div style="font-size:12px;color:#999;margin-bottom:14px;">复制后打开微信添加</div>
+        <button onclick="navigator.clipboard.writeText('你的微信号');this.textContent='已复制';this.style.background='#6BCB77'" style="background:#C9A050;color:#000;border:none;padding:10px 24px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;">复制微信号</button>
+    </div>
+</div>
     </div>
 
     <script src="lunar-bundle.js"></script>
@@ -1358,33 +1372,44 @@ function goHome() {
             const tarotRow = document.getElementById('qmTarot');
             tarotRow.innerHTML = '<div class="tarot-loading">推演中...</div>';
             document.getElementById('qmSummary').innerHTML = '';
-const prompt = `解读奇门排盘：时间${r.sz.year}年${r.sz.month}月${r.sz.day}日${r.sz.shi}时，${r.yang?'阳遁':'阴遁'}${r.ju}局，值符${r.zf}，值使${r.zs}，空亡${r.kong.join('、')||'无'}，驿马${r.ym||'无'}。九宫详情：${JSON.stringify(r.cells)}。
+const prompt = `当前时空奇门盘面：
+时间${r.sz.year}年${r.sz.month}月${r.sz.day}日${r.sz.shi}时，
+${r.yang?'阳遁':'阴遁'}${r.ju}局，值符${r.zf}，值使${r.zs}，
+空亡${r.kong.join('、')||'无'}，驿马${r.ym||'无'}。
+九宫详情：${JSON.stringify(r.cells)}
 
-按以下格式输出，必须严格遵守：
+根据当前时空盘面，解读这个时段在事业、财富、感情、健康四个维度的影响。
 
+现状部分的写作要求：
+写出当前这段时间让人有感觉但说不清楚的那种处境——不是"环境复杂"，
+而是具体的、有质感的生活场景。要让用户看完觉得"它说中了我现在的状态"。
+
+未来部分的写作要求：
+给出接下来这段时间具体会出现的转变，带明确的时间感，
+比如"接下来两到三周""这个月内"。
+给出一个具体的行动建议，不是"保持耐心"，
+而是在什么情况下做什么、避开什么。
+
+严格按以下格式输出：
 事业
-现状：...
-未来：...
-
+现状：
+未来：
 财富
-现状：...
-未来：...
-
+现状：
+未来：
 感情
-现状：...
-未来：...
-
+现状：
+未来：
 健康
-现状：...
-未来：...
-
-直接给解读，严禁开头引导语和结尾客套话，不用术语。每段至少写5句完整的话。`;
+现状：
+未来：`;
 
 callAI(prompt).then(t => {
     tarotRow.innerHTML = buildTarotCards(t, true);
 }).catch(e => {
     tarotRow.innerHTML = '<div style="color:var(--red);text-align:center;">AI失败：' + e.message + '</div>';
 });
+document.getElementById('unlockBtn').style.display = 'block';
         }
 
         function buildTarotCards(text, hasFuture = true) {
@@ -1423,7 +1448,7 @@ callAI(prompt).then(t => {
 
         function cardHTML(dim, now, fut, hasFuture) {
             if (!hasFuture) return `<div class="tarot-card" onclick="this.classList.toggle('flipped')"><div class="tarot-card-inner"><div class="tarot-face tarot-back">${dim}</div><div class="tarot-face tarot-front"><div class="tarot-upper"><div class="card-dim-title">${dim}</div><div class="phase-body">${now}</div></div></div></div></div>`;
-            return `<div class="tarot-card" onclick="this.classList.toggle('flipped')"><div class="tarot-card-inner"><div class="tarot-face tarot-back">${dim}</div><div class="tarot-face tarot-front"><div class="tarot-upper"><div class="card-dim-title">${dim}</div><div class="phase-title phase-now">现状</div><div class="phase-body">${now}</div></div><div class="tarot-lower"><div class="phase-title phase-future">未来</div><div class="phase-body">${fut}</div></div></div></div></div>`;
+            return `<div class="tarot-card" onclick="this.classList.toggle('flipped')"><div class="tarot-card-inner"><div class="tarot-face tarot-back">${dim}</div><div class="tarot-face tarot-front"><div class="tarot-upper"><div class="card-dim-title">${dim}</div><div class="phase-title phase-now">现状</div><div class="phase-body">${now}</div></div><div class="tarot-lower"><div class="phase-title phase-future">未来</div><div class="phase-body"><span style="filter:blur(6px);user-select:none;">${fut}</span></div></div></div></div></div>`;
         }
 
         function doQimen() { const v = document.getElementById('qmDt').value; if (!v) return alert('请选择时间');
@@ -1508,12 +1533,33 @@ if (typeof _hmt !== 'undefined') _hmt.push(['_trackEvent', '工具', '排盘', '
         </table>
         <div class="tarot-row" id="bzTarot"><div class="tarot-loading">推演中...</div></div>`;
 
-    const prompt = `解读八字：性别${gender}，八字${bz.join(' ')}。请分别为事业、财富、感情、健康四方面各写一段解读。直接给解读，严禁开头引导语和结尾客套话，不用术语。每段至少写4句完整的话。`;
+    const prompt = `解读八字：性别${gender}，八字${bz.join(' ')}
+
+从这个人的命局出发，解读事业、财富、感情、健康四个维度。
+
+写作要求：
+从具体的生命体验切入，比如"有一种感觉你可能很熟悉——"
+或者"你大概从很早开始就知道，自己和周围人处理事情的方式不太一样——"。
+
+写出这个命局里那些别人不容易理解、但本人深有感受的特质。
+写出真实的挑战，不美化也不吓人，像一个了解你的人说实话。
+
+事业：写出这个人的优势怎么发挥、在什么类型的环境里容易受阻、
+什么阶段是关键转折期。
+财富：写出具体的财富获取路径特征——靠什么来钱、
+容易在哪里漏财、人生哪个阶段财运真正打开。
+感情：写出这个人在关系里真实的模式，
+包括他自己可能没意识到的那种惯性。
+健康：写出具体的身体倾向和需要注意的时间节点，
+不只是"注意休息"。
+每个维度至少5句完整的话。`;
+
     callAI(prompt).then(t => {
         document.getElementById('bzTarot').innerHTML = buildTarotCards(t, false);
     }).catch(e => {
         document.getElementById('bzTarot').innerHTML = '<div style="color:var(--red);text-align:center;">AI失败：' + e.message + '</div>';
     });
+document.getElementById('unlockBtn').style.display = 'block';
 }
 
 function setBaziNow() {
@@ -1561,49 +1607,21 @@ function setBaziNow() {
                 document.getElementById('xlrAI').innerHTML = '<span style="color:var(--red);">失败：' + e.message +
                     '</span>';
             });
+
         }
 
         // ==================== API ====================
-        function getAPIKey() { return localStorage.getItem('ds_key') || ''; }
-
-        function setupAPI() { const k = prompt('请输入你的API Key（sk-开头）：', getAPIKey()); if (k !== null) { localStorage
-                    .setItem('ds_key', k.trim());
-                updApiBtn(); } }
-
-        function updApiBtn() { const b = document.getElementById('apiBtn');
-            b.textContent = getAPIKey() ? '🔑 已设置' : '🔑 API设置';
-            b.className = 'api-btn' + (getAPIKey() ? ' has-key' : ''); }
-        updApiBtn();
         async function callAI(prompt) {
-           const key = 'sk-d10222dfce1548389edcc571970f46ca'; if (!key) return '⚠️ 请先设置API Key。';
-            try {
-                const r = await fetch('https://api.deepseek.com/v1/chat/completions', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
-                    body: JSON.stringify({
-                        model: 'deepseek-chat',
-                        messages: [{ role: 'system',
-    content: `你是一个命理分析引擎。你的输出必须严格遵守以下规则：
-1. 直接输出解读内容，不写任何开头语、引导语、寒暄、客套话。
-2. 不写结尾总结、祝福语、免责声明。
-3. 不对用户提问，不写"你知道吗""记住"等互动语句。
-4. 禁止使用套话比喻，包括但不限于"钱袋子漏了""像一团火""像一把刀"等，每次解读必须原创。
-5. 每段内容至少写5句完整的话，不允许中途截断。
-6. 八字解读不写"现状""未来"字样。
-7. 奇门解读只写"现状"和"未来"两段，不多不少。
-8. 小六壬直接解读掌诀含义，不写"现状""未来"。
-9. 严禁使用任何专业术语。包括但不限于：生门、坎宫、天蓬、戊土、白虎、玄武、九地、天芮、九天、天辅、太阴、离宫、震宫、巽宫、艮宫、坤宫、乾宫、兑宫、天柱、金旺、水旺、木克土等。如果必须描述位置或状态，用日常用语代替。
-10.违反以上任何一条，输出即为不合格。` },
-                            { role: 'user', content: prompt }
-                        ],
-                        max_tokens: 6000,
-                        temperature: 0.3
-                    })
-                });
-                const d = await r.json();
-                return d.choices?.[0]?.message?.content || '⚠️ 返回异常：' + JSON.stringify(d);
-            } catch (e) { return '⚠️ 请求失败：' + e.message; }
-        }
+    try {
+       const r = await fetch('https://dongxuan-xcqdbolcnh.cn-hangzhou.fcapp.run', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt })
+});
+        const d = await r.json();
+        return d.choices?.[0]?.message?.content || '⚠️ 返回异常：' + JSON.stringify(d);
+    } catch (e) { return '⚠️ 请求失败：' + e.message; }
+}
 
         // ==================== 初始化 ====================
         function initAll() { const n = new Date(); const s = n.getFullYear() + '-' + String(n.getMonth() + 1).padStart(2,
@@ -1644,6 +1662,7 @@ function submitFeedback() {
 }
 }
     </script>
+
 <span style="position:fixed;bottom:20px;right:20px;color:rgba(255,255,255,0.35);font-size:24px;cursor:pointer;z-index:999;text-decoration:underline;" onclick="document.getElementById('fbModal').style.display='flex'">反馈</span>
 <div style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:1000;display:none;justify-content:center;align-items:center;" id="fbModal" onclick="if(event.target===this)this.style.display='none'">
     <div style="background:#111;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:20px;width:300px;text-align:center;">
@@ -1655,5 +1674,6 @@ function submitFeedback() {
         <span id="fbMsg" style="font-size:10px;color:#6BCB77;display:none;margin-top:8px;">已提交</span>
     </div>
 </div>
+
 </body>
 </html>
