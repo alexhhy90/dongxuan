@@ -1611,13 +1611,22 @@ function setBaziNow() {
         }
 
         // ==================== API ====================
-        async function callAI(prompt) {
+async function callAI(prompt) {
+    const key = 'sk-d10222dfce1548389edcc571970f46ca';
     try {
-       const r = await fetch('https://dongxuan-xcqdbolcnh.cn-hangzhou.fcapp.run', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prompt })
-});
+        const r = await fetch('https://api.deepseek.com/v1/chat/completions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
+            body: JSON.stringify({
+                model: 'deepseek-chat',
+                messages: [
+                    { role: 'system', content: `你是一个命理解读师，说话直接、有真实洞察力，像一个真正了解对方的朋友在说实话。写作标准：每一句话必须说中一个具体的感受、处境或场景。用具体的情绪场景和生活细节代替抽象状态词。每次描述都必须根据当前盘面原创，严禁重复使用相同的句式结构。用第二人称"你"直接对话。硬性规则：禁止命理术语。禁止开头引导语、结尾客套话。每段至少5句完整的话。` },
+                    { role: 'user', content: prompt }
+                ],
+                max_tokens: 6000,
+                temperature: 0.3
+            })
+        });
         const d = await r.json();
         return d.choices?.[0]?.message?.content || '⚠️ 返回异常：' + JSON.stringify(d);
     } catch (e) { return '⚠️ 请求失败：' + e.message; }
