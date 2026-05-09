@@ -703,6 +703,7 @@
             <button class="tab-btn active" id="tab-qimen" onclick="swPage('qimen')">奇门遁甲</button>
             <button class="tab-btn" id="tab-bazi" onclick="swPage('bazi')">八字</button>
             <button class="tab-btn" id="tab-xiaoliuren" onclick="swPage('xiaoliuren')">小六壬</button>
+
         </div>
         <div class="page active" id="pg-qimen">
 	<div style="text-align:center;color:var(--text-muted);font-size:20px;margin-bottom:8px;">分析当前时空下的机会与阻碍，看清事业、财富、感情、健康的走势</div>
@@ -824,6 +825,7 @@ function goHome() {
             document.getElementById('pg-' + n).classList.add('active');
             const tab = document.getElementById('tab-' + n);
             if (tab) tab.classList.add('active');
+	    if (n === 'xiaoliuren') document.getElementById('unlockBtn').style.display = 'none';
         }
         // ==================== 常量 ====================
         const GanArr = '甲乙丙丁戊己庚辛壬癸'.split(''),
